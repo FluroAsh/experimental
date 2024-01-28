@@ -1,0 +1,32 @@
+body {
+  background-color: #fff;
+  color: #e1e1e1;
+  background: #1f1f1f;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  padding: 5em;
+  min-height: 100vh;
+}
+
+h1 {
+  line-height: 0;
+}
+
+h3 {
+  font-size: 1.5em;
+  margin: 0;
+  margin-bottom: 1em;
+  color: #bebebe;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  padding: 2em;
+  background-color: hsla(0, 0%, 100%, 0.1);
+  min-height: 500px;
+  border-radius: 8px;
+}

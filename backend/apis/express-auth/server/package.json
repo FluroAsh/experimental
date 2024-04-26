@@ -1,0 +1,22 @@
+{
+  "name": "express-auth",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "npx nodemon --exec tsx app.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.19.2"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "chalk": "^5.3.0",
+    "nodemon": "^3.1.0",
+    "tsx": "^4.7.3"
+  }
+}

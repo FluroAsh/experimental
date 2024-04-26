@@ -1,0 +1,6 @@
+{
+  "verbose": true,
+  "watch": ["app.ts", "routes"],
+  "ignore": ["node_modules", "dist"],
+  "ext": "ts,js,json"
+}

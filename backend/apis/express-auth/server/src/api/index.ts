@@ -1,8 +1,7 @@
 import { Response, Router } from 'express'
 import pkg from 'package.json'
 
-import { jwtRouter } from '@/api/jwt'
-import { sessionRouter } from '@/api/session'
+import { userRouter } from '@/api/user'
 
 const router = Router()
 
@@ -15,7 +14,6 @@ router.get('/', (_, res: Response) => {
   })
 })
 
-router.use('/auth', jwtRouter)
-router.use('/auth', sessionRouter)
+router.use('/user', userRouter)
 
 export default router

@@ -1,6 +1,6 @@
 {
   "verbose": true,
-  "watch": ["./src/app.ts", "./src/routes", "./src/controllers"],
+  "watch": ["./src/app.ts", "./src/**/*"],
   "ignore": ["node_modules", "dist"],
   "ext": "ts,js,json"
 }

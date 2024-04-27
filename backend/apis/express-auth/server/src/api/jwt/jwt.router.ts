@@ -1,5 +1,5 @@
-import { Request, Response, Router } from 'express'
-// import { jwtAuth } from '@/controllers'
+import { Router } from 'express'
+import { jwtController } from './index'
 
 const router = Router()
 
@@ -9,10 +9,6 @@ router.use((req, res, next) => {
   next()
 })
 
-const jwtAuth = (_req: Request, res: Response) => {
-  res.send('You have been authenticated using a JWT')
-}
-
-router.post('/jwt', jwtAuth)
+router.post('/jwt')
 
 export default router

@@ -1,14 +1,7 @@
 import express from 'express'
 import chalk from 'chalk'
 
-import { authRouter, rootRouter } from './routes'
-
-/**
- * What I want to do:
- * 1. Create an Express server that will authenticate users using A JSON Web Token (JWT)
- * 2. Create an Express server that will authenticate users using a session token & cookie
- * - This will require a Database implementation to store user sessions
- */
+import apiRouters from '@/api'
 
 const app = express()
 const PORT = 3005
@@ -19,8 +12,7 @@ app.use((_req, _res, next) => {
   next()
 })
 
-app.use('/', rootRouter)
-app.use('/auth', authRouter)
+app.use('/', apiRouters)
 
 app.listen(PORT, () => {
   console.log(

@@ -1,7 +1,7 @@
 import express from 'express'
 import chalk from 'chalk'
-import authRouter from './routes/auth'
-import rootRouter from './routes/root'
+
+import { authRouter, rootRouter } from './routes'
 
 /**
  * What I want to do:
@@ -24,6 +24,6 @@ app.use('/auth', authRouter)
 
 app.listen(PORT, () => {
   console.log(
-    [chalk.bgBlue.white.bold('Server is running on:'), chalk.bgWhite.black(`http://localhost:${PORT}`)].join(' ')
+    [chalk.bgBlue.black.bold('Server is running on '), chalk.bgWhite.black(`\thttp://localhost:${PORT}\t\t`)].join(' ')
   )
 })

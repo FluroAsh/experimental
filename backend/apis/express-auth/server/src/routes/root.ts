@@ -1,5 +1,5 @@
 import { Response, Router } from 'express'
-import pkg from '../package.json'
+import pkg from 'package.json'
 
 const router = Router()
 

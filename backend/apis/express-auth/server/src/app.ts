@@ -3,13 +3,9 @@ import chalk from 'chalk'
 
 import apiRouters from '@/api'
 
+// TODO: Add a middleware function to initialize neccessay app middleware
 const app = express()
-
-// Middleware example, this will run on every request
-app.use((_req, _res, next) => {
-  console.log('Middleware is running')
-  next()
-})
+app.use(express.json())
 
 app.use('/', apiRouters)
 

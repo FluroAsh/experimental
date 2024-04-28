@@ -1,6 +1,8 @@
 import { NextFunction, Request, Response } from 'express'
 import jwt from 'jsonwebtoken'
 
+import { createUser } from './user.models'
+
 const getTokenSecret = () => {
   const tokenSecret = process.env.TOKEN_SECRET
   if (!tokenSecret) throw new Error('A token was attempted to be generated without a secret!')
@@ -26,28 +28,33 @@ const authenticateToken = (req: Request, res: Response, next: NextFunction) => {
   })
 }
 
-// TODO:
-// 1. Create a user in a database
-// 2. Store the token in a client-side cookie (`HttpOnly` & `SameSite=Lax`)
-const register = (req: Request, res: Response) => {
-  const { username } = req.body
+const register = async (req: Request, res: Response) => {
+  const { username, password } = req.body
 
-  if (!username) {
+  if (!username || !password) {
     return res.send('Invalid Details').status(422)
   }
 
-  // Create a new "user" in the database
-  // - If the user already exists handle the error
+  try {
+    const token = generateToken(username)
+    const [user] = await createUser(username, password)
 
-  // Store the token in a cookie
-  const token = generateToken(username)
+    res.cookie('jwt', token)
 
-  return res
-    .json({
-      message: 'Succesfully created a new user!',
-      token
-    })
-    .status(201)
+    return res
+      .json({
+        message: 'User created successfully',
+        username: user.username,
+        password: user.password,
+        token
+      })
+      .status(201)
+  } catch (e: unknown) {
+    if (e instanceof Error) {
+      console.error(e.message)
+    }
+    return res.send('Error creating user').status(500)
+  }
 }
 
 // TODO:
@@ -77,6 +84,7 @@ const login = (req: Request, res: Response) => {
     .status(200)
 }
 
+/* ----- HTTP Methods ----- */
 const POST = {
   register,
   login

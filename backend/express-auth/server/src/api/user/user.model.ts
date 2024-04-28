@@ -12,8 +12,7 @@ export const createUser = async (username: string, password: string) => {
     return newUser
   } catch (e) {
     if (e instanceof Error) {
-      console.error(e.message)
-      throw new Error('Unable to create user. Please try again')
+      throw new Error('Unable to create user. Please try again.')
     }
     throw Error
   }

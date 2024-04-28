@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from 'express'
 import jwt from 'jsonwebtoken'
+import chalk from 'chalk'
 
 import { createUser, validateUser } from './user.model'
-import chalk from 'chalk'
 
 const generateToken = (username: string) => jwt.sign({ username }, process.env.TOKEN_SECRET!, { expiresIn: '1800s' })
 
@@ -10,10 +10,10 @@ const authenticateToken = (req: Request, res: Response, next: NextFunction) => {
   const { authorization } = req.headers
   const token = authorization && authorization.split(' ')[1]
 
-  if (!token) return res.send('Unauthorized').status(401)
+  if (!token) return res.status(401).json({ message: 'Unauthorized.' })
 
   jwt.verify(token, process.env.TOKEN_SECRET!, (err: unknown, user: any) => {
-    if (err) return res.send('Unauthorized').status(401)
+    if (err) return res.status(401).json({ message: 'Unauthorized.' })
     req.user = user
     next()
   })
@@ -23,7 +23,7 @@ const register = async (req: Request, res: Response) => {
   const { username, password } = req.body
 
   if (!username || !password) {
-    return res.send('Invalid Details').status(422)
+    throw new Error('Username or password was not provided.')
   }
 
   try {
@@ -32,39 +32,39 @@ const register = async (req: Request, res: Response) => {
 
     res.cookie('jwt', token)
 
-    return res
-      .json({
-        message: 'User created successfully',
-        username: user.username,
-        password: user.password,
-        token
-      })
-      .status(201)
+    return res.status(201).json({
+      message: 'User created successfully.',
+      username: user.username,
+      password: user.password,
+      token
+    })
   } catch (e) {
     if (e instanceof Error) {
-      return res.send(e.message).status(422)
+      return res.status(422).json({ message: e.message })
     }
-    return res.send('Error creating user').status(500)
+    return res.status(500).json({ message: 'Error creating user.' })
   }
 }
 
 const login = async (req: Request, res: Response) => {
   const { username, password } = req.body
-  console.log(chalk.bgWhite.black`[server]: User ${username} is trying to login`)
+  console.log(chalk.bgWhite.black(`[server]: User "${username}" is trying to login`))
 
   try {
     const isValidUser = await validateUser(username, password)
 
     if (!isValidUser) {
-      return res.send('Invalid login').status(404)
+      throw new Error('No matching credentials.')
     }
 
     const token = generateToken(username)
     res.cookie('jwt', token)
 
-    return res.json({ message: 'Logged in succesfully' }).status(200)
+    return res.status(200).json({ message: 'Logged in succesfully.' })
   } catch (e) {
-    return res.send('Invalid login').status(404)
+    if (e instanceof Error) {
+      return res.status(400).json({ message: e.message })
+    }
   }
 }
 
@@ -76,12 +76,10 @@ const POST = {
 
 // TBC: Implement GET method to retrieve user details
 const GET = (req: Request, res: Response) => {
-  return res
-    .json({
-      firstName: 'Ashley',
-      lastName: 'Thompson'
-    })
-    .status(200)
+  return res.status(200).json({
+    firstName: 'Ashley',
+    lastName: 'Thompson'
+  })
 }
 
 export { POST, GET, authenticateToken }

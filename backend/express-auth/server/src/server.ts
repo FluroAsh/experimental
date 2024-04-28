@@ -9,7 +9,8 @@ const app = express()
 app.use(express.json())
 app.use(
   cors({
-    origin: '*'
+    origin: process.env.CLIENT_URL,
+    credentials: true
   })
 )
 app.use('/', apiRouters)

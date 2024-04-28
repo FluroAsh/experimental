@@ -1,16 +1,20 @@
 import { eq } from 'drizzle-orm'
+import bcrypt from 'bcrypt'
 
 import db from '@/db'
 import { users } from '@/db/schema'
 
 export const createUser = async (username: string, password: string) => {
-  try {
-    // encrypt password before storing it
+  const SALT_ROUNDS = 10
 
-    const user = await db.insert(users).values({ username, password }).returning()
+  try {
+    const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS)
+    const user = await db.insert(users).values({ username, password: hashedPassword }).returning()
+
     return user
   } catch (e) {
     if (e instanceof Error) {
+      console.error(e.message)
       throw new Error('Username already exists')
     }
     throw Error

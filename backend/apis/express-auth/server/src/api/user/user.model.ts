@@ -8,13 +8,12 @@ import db from '@/db'
 export const createUser = async (username: string, password: string) => {
   try {
     const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS)
-    const user = await db.insert(users).values({ username, password: hashedPassword }).returning()
-
-    return user
+    const newUser = await db.insert(users).values({ username, password: hashedPassword }).returning()
+    return newUser
   } catch (e) {
     if (e instanceof Error) {
       console.error(e.message)
-      throw new Error('Username already exists')
+      throw new Error('Unable to create user. Please try again')
     }
     throw Error
   }

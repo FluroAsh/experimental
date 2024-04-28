@@ -1,13 +1,13 @@
 import { Router } from 'express'
-import * as uc from './user.controller'
+import { POST, GET, authenticateToken } from './user.controller'
 
 const router = Router()
 
 /* ----- Private routes ----- */
-router.get('/details', uc.authenticateToken, uc.GET)
+router.get('/details', authenticateToken, GET)
 
 /* ----- Public routes ----- */
-router.post('/register', uc.POST.register)
-router.post('/login', uc.authenticateToken, uc.POST.login)
+router.post('/register', POST.register)
+router.post('/login', authenticateToken, POST.login)
 
 export default router

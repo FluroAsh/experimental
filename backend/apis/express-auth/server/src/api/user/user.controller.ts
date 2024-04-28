@@ -22,7 +22,7 @@ const authenticateToken = (req: Request, res: Response, next: NextFunction) => {
   const TOKEN_SECRET = getTokenSecret()
 
   jwt.verify(token, TOKEN_SECRET, (err: unknown, user: any) => {
-    if (err) return res.send('Forbidden').status(403)
+    if (err) return res.send('Unauthorized').status(401)
     req.user = user
     next()
   })
@@ -51,7 +51,7 @@ const register = async (req: Request, res: Response) => {
       .status(201)
   } catch (e: unknown) {
     if (e instanceof Error) {
-      console.error(e.message)
+      return res.send(e.message).status(422)
     }
     return res.send('Error creating user').status(500)
   }

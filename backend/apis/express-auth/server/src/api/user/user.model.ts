@@ -1,12 +1,11 @@
 import { eq } from 'drizzle-orm'
 import bcrypt from 'bcrypt'
 
-import db from '@/db'
+import { SALT_ROUNDS } from '@/constants'
 import { users } from '@/db/schema'
+import db from '@/db'
 
 export const createUser = async (username: string, password: string) => {
-  const SALT_ROUNDS = 10
-
   try {
     const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS)
     const user = await db.insert(users).values({ username, password: hashedPassword }).returning()

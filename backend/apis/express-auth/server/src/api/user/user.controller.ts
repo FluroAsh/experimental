@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import jwt from 'jsonwebtoken'
 
-import { createUser, findUser, validateUser } from './user.model'
+import { createUser, validateUser } from './user.model'
 
 const generateToken = (username: string) => jwt.sign({ username }, process.env.TOKEN_SECRET!, { expiresIn: '1800s' })
 
@@ -72,6 +72,7 @@ const POST = {
   login
 }
 
+// TBC: Implement GET method to retrieve user details
 const GET = (req: Request, res: Response) => {
   return res
     .json({

@@ -1,7 +1,6 @@
 import { Response, Router } from 'express'
-import pkg from 'package.json'
-
 import { userRouter } from '@/api/user'
+import pkg from 'package.json'
 
 const router = Router()
 

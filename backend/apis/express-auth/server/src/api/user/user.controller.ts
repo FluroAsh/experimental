@@ -49,7 +49,7 @@ const register = async (req: Request, res: Response) => {
         token
       })
       .status(201)
-  } catch (e: unknown) {
+  } catch (e) {
     if (e instanceof Error) {
       return res.send(e.message).status(422)
     }

@@ -9,7 +9,7 @@ export const createUser = async (username: string, password: string) => {
 
     const user = await db.insert(users).values({ username, password }).returning()
     return user
-  } catch (e: unknown) {
+  } catch (e) {
     if (e instanceof Error) {
       throw new Error('Username already exists')
     }

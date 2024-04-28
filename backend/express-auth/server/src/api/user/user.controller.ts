@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express'
 import jwt from 'jsonwebtoken'
 
 import { createUser, validateUser } from './user.model'
+import chalk from 'chalk'
 
 const generateToken = (username: string) => jwt.sign({ username }, process.env.TOKEN_SECRET!, { expiresIn: '1800s' })
 
@@ -49,6 +50,7 @@ const register = async (req: Request, res: Response) => {
 
 const login = async (req: Request, res: Response) => {
   const { username, password } = req.body
+  console.log(chalk.bgWhite.black`[server]: User ${username} is trying to login`)
 
   try {
     const isValidUser = await validateUser(username, password)

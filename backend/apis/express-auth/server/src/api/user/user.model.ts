@@ -21,7 +21,11 @@ export const createUser = async (username: string, password: string) => {
   }
 }
 
-export const findUser = async (username: string) => {
-  const user = await db.select().from(users).where(eq(users.username, username)).limit(1)
-  return user
+export const findUser = async (username: string) => db.select().from(users).where(eq(users.username, username))
+
+export const validateUser = async (username: string, password: string) => {
+  const [user] = await findUser(username)
+  if (!user) return false
+
+  return bcrypt.compare(password, user.password)
 }

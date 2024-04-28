@@ -1,27 +1,17 @@
 import { NextFunction, Request, Response } from 'express'
 import jwt from 'jsonwebtoken'
 
-import { createUser } from './user.models'
+import { createUser, findUser, validateUser } from './user.model'
 
-const getTokenSecret = () => {
-  const tokenSecret = process.env.TOKEN_SECRET
-  if (!tokenSecret) throw new Error('A token was attempted to be generated without a secret!')
-  return tokenSecret
-}
-
-const generateToken = (username: string) => {
-  const TOKEN_SECRET = getTokenSecret()
-  return jwt.sign({ username }, TOKEN_SECRET, { expiresIn: '1800s' })
-}
+const generateToken = (username: string) => jwt.sign({ username }, process.env.TOKEN_SECRET!, { expiresIn: '1800s' })
 
 const authenticateToken = (req: Request, res: Response, next: NextFunction) => {
   const { authorization } = req.headers
   const token = authorization && authorization.split(' ')[1]
 
   if (!token) return res.send('Unauthorized').status(401)
-  const TOKEN_SECRET = getTokenSecret()
 
-  jwt.verify(token, TOKEN_SECRET, (err: unknown, user: any) => {
+  jwt.verify(token, process.env.TOKEN_SECRET!, (err: unknown, user: any) => {
     if (err) return res.send('Unauthorized').status(401)
     req.user = user
     next()
@@ -57,31 +47,23 @@ const register = async (req: Request, res: Response) => {
   }
 }
 
-// TODO:
-// 1. Locate the created user in the database
-// 2. Validate the users credentials match
-// -  If the user does not exist, return a 404 (not found)
-// -  If the user exists, return a 200 (OK)
-const login = (req: Request, res: Response) => {
+const login = async (req: Request, res: Response) => {
   const { username, password } = req.body
-  console.log({ username, password })
 
-  // Locate User in DB
+  try {
+    const isValidUser = await validateUser(username, password)
 
-  // Validate
-  // - Compare password with stored password
+    if (!isValidUser) {
+      return res.send('Invalid login').status(404)
+    }
 
-  // Generate & store JWT token
+    const token = generateToken(username)
+    res.cookie('jwt', token)
 
-  // Set the token as a client-side cookie
-
-  // Return 200 (OK) status
-  return res
-    .json({
-      message: 'Succesfully logged in!',
-      user: req.user
-    })
-    .status(200)
+    return res.json({ message: 'Logged in succesfully' }).status(200)
+  } catch (e) {
+    return res.send('Invalid login').status(404)
+  }
 }
 
 /* ----- HTTP Methods ----- */

@@ -1,3 +1,5 @@
+import { Link } from '@tanstack/react-router'
+
 export default function Login() {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -69,6 +71,10 @@ export default function Login() {
         >
           Submit
         </button>
+
+        <Link to="/register" className="text-sm font-bold text-neutral-400 hover:text-neutral-200">
+          Register
+        </Link>
       </form>
     </div>
   )

@@ -8,6 +8,20 @@
       "when": 1714291362739,
       "tag": "0000_soft_warbird",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1714399240347,
+      "tag": "0001_faulty_sersi",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1714559910821,
+      "tag": "0002_jazzy_darwin",
+      "breakpoints": true
     }
   ]
 }

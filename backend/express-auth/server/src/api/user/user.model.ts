@@ -5,10 +5,13 @@ import { SALT_ROUNDS } from '@/constants'
 import { users } from '@/db/schema'
 import db from '@/db'
 
-export const createUser = async (username: string, password: string) => {
+export const createUser = async (username: string, password: string, firstName: string, lastName: string) => {
   try {
     const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS)
-    const newUser = await db.insert(users).values({ username, password: hashedPassword }).returning()
+    const newUser = await db
+      .insert(users)
+      .values({ username, password: hashedPassword, firstName, lastName })
+      .returning()
     return newUser
   } catch (e) {
     if (e instanceof Error) {
@@ -18,7 +21,12 @@ export const createUser = async (username: string, password: string) => {
   }
 }
 
-export const findUser = async (username: string) => db.select().from(users).where(eq(users.username, username))
+/** Attempts to find a user by their `id` or `username`. */
+export const findUser = async (param: string, matcher: 'id' | 'username' = 'username') =>
+  db
+    .select()
+    .from(users)
+    .where(eq(matcher === 'id' ? users.id : users.username, param))
 
 export const validateUser = async (username: string, password: string) => {
   const [user] = await findUser(username)

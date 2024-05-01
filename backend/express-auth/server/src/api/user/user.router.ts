@@ -7,6 +7,7 @@ const router = Router()
 router.get('/details', authenticateToken, GET)
 
 /* ----- Public routes ----- */
+router.get('/:id', GET)
 router.post('/register', POST.register)
 router.post('/login', POST.login)
 

@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express'
 import jwt from 'jsonwebtoken'
 import chalk from 'chalk'
 
-import { createUser, validateUser } from './user.model'
+import { createUser, findUser, validateUser } from './user.model'
 
 const generateToken = (username: string) => jwt.sign({ username }, process.env.TOKEN_SECRET!, { expiresIn: '1800s' })
 
@@ -20,15 +20,19 @@ const authenticateToken = (req: Request, res: Response, next: NextFunction) => {
 }
 
 const register = async (req: Request, res: Response) => {
-  const { username, password } = req.body
+  const { username, password, firstName, lastName } = req.body
 
-  if (!username || !password) {
-    throw new Error('Username or password was not provided.')
-  }
+  const hasRequiredFields = [username, password, firstName, lastName].every(
+    (field) => field !== undefined && field !== null
+  )
 
   try {
+    if (!hasRequiredFields) {
+      throw new Error('Incomplete credentials provided.')
+    }
+
     const token = generateToken(username)
-    const [user] = await createUser(username, password)
+    const [user] = await createUser(username, password, firstName, lastName)
 
     res.cookie('jwt', token)
 
@@ -36,6 +40,8 @@ const register = async (req: Request, res: Response) => {
       message: 'User created successfully.',
       username: user.username,
       password: user.password,
+      firstName: user.firstName,
+      lastName: user.lastName,
       token
     })
   } catch (e) {
@@ -74,12 +80,12 @@ const POST = {
   login
 }
 
-// TBC: Implement GET method to retrieve user details
-const GET = (req: Request, res: Response) => {
-  return res.status(200).json({
-    firstName: 'Ashley',
-    lastName: 'Thompson'
-  })
+const GET = async (req: Request, res: Response) => {
+  const { id } = req.params
+  const [user] = await findUser(id, 'id')
+
+  if (!user) return res.status(404).json({ message: 'User not found.' })
+  return res.status(200).json(user)
 }
 
 export { POST, GET, authenticateToken }

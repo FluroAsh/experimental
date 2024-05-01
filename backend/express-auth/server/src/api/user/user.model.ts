@@ -28,7 +28,9 @@ export const findUser = async (param: string, matcher: 'id' | 'username' = 'user
     .from(users)
     .where(eq(matcher === 'id' ? users.id : users.username, param))
 
-export const validateUser = async (username: string, password: string) => {
+export const findUsers = async () => db.select().from(users)
+
+export const validateUsernamePassword = async (username: string, password: string) => {
   const [user] = await findUser(username)
   if (!user) return false
 

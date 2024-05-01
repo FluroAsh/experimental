@@ -2,21 +2,38 @@ import { NextFunction, Request, Response } from 'express'
 import jwt from 'jsonwebtoken'
 import chalk from 'chalk'
 
-import { createUser, findUser, validateUser } from './user.model'
+import { createUser, findUser, findUsers, validateUsernamePassword } from './user.model'
 
 const generateToken = (username: string) => jwt.sign({ username }, process.env.TOKEN_SECRET!, { expiresIn: '1800s' })
 
-const authenticateToken = (req: Request, res: Response, next: NextFunction) => {
+const authenticateToken = async (req: Request, res: Response, next: NextFunction) => {
   const { authorization } = req.headers
   const token = authorization && authorization.split(' ')[1]
 
   if (!token) return res.status(401).json({ message: 'Unauthorized.' })
 
-  jwt.verify(token, process.env.TOKEN_SECRET!, (err: unknown, user: any) => {
+  jwt.verify(token, process.env.TOKEN_SECRET!, (err, user: any) => {
     if (err) return res.status(401).json({ message: 'Unauthorized.' })
     req.user = user
     next()
   })
+}
+
+const verifyUserMatch = async (req: Request, res: Response, next: NextFunction) => {
+  const { id } = req.params
+  const { authorization } = req.headers
+  const token = authorization!.split(' ')[1]
+
+  const jwtData = (await jwt.decode(token)) as { username?: string }
+  const username = jwtData?.username
+
+  if (!username) return res.status(401).json({ message: 'Unauthorized.' })
+
+  const [user] = await findUser(id, 'id')
+  const validUser = user?.username === username
+
+  if (!validUser) return res.status(401).json({ message: 'Unauthorized.' })
+  return res.status(200).json(user)
 }
 
 const register = async (req: Request, res: Response) => {
@@ -57,7 +74,7 @@ const login = async (req: Request, res: Response) => {
   console.log(chalk.bgWhite.black(`[server]: User "${username}" is trying to login`))
 
   try {
-    const isValidUser = await validateUser(username, password)
+    const isValidUser = await validateUsernamePassword(username, password)
 
     if (!isValidUser) {
       throw new Error('No matching credentials.')
@@ -74,13 +91,7 @@ const login = async (req: Request, res: Response) => {
   }
 }
 
-/* ----- HTTP Methods ----- */
-const POST = {
-  register,
-  login
-}
-
-const GET = async (req: Request, res: Response) => {
+const getUser = async (req: Request, res: Response) => {
   const { id } = req.params
   const [user] = await findUser(id, 'id')
 
@@ -88,4 +99,24 @@ const GET = async (req: Request, res: Response) => {
   return res.status(200).json(user)
 }
 
-export { POST, GET, authenticateToken }
+const getAllUsers = async (req: Request, res: Response) => {
+  const users = await findUsers()
+
+  if (!users || users.length === 0) {
+    return res.status(422).json({ message: 'Something went wrong. Please ' })
+  }
+  return res.status(200).json(users)
+}
+
+/* ----- HTTP Methods ----- */
+const POST = {
+  register,
+  login
+}
+
+const GET = {
+  getUser,
+  getAllUsers
+}
+
+export { POST, GET, authenticateToken, verifyUserMatch }

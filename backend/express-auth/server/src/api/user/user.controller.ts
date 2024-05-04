@@ -20,20 +20,22 @@ const authenticateToken = async (req: Request, res: Response, next: NextFunction
 }
 
 const verifyUserMatch = async (req: Request, res: Response, next: NextFunction) => {
-  const { id } = req.params
+  const { username } = req.params
   const { authorization } = req.headers
   const token = authorization!.split(' ')[1]
 
   const jwtData = (await jwt.decode(token)) as { username?: string }
-  const username = jwtData?.username
+  const decodedUsername = jwtData?.username
 
-  if (!username) return res.status(401).json({ message: 'Unauthorized.' })
+  if (!username || !decodedUsername) {
+    return res.status(401).json({ message: 'Unauthorized.' })
+  }
 
-  const [user] = await findUser(id, 'id')
+  const [user] = await findUser(username)
   const validUser = user?.username === username
 
   if (!validUser) return res.status(401).json({ message: 'Unauthorized.' })
-  return res.status(200).json(user)
+  next()
 }
 
 const register = async (req: Request, res: Response) => {
@@ -92,11 +94,15 @@ const login = async (req: Request, res: Response) => {
 }
 
 const getUser = async (req: Request, res: Response) => {
-  const { id } = req.params
-  const [user] = await findUser(id, 'id')
+  const { username } = req.params
+  const [user] = await findUser(username)
 
   if (!user) return res.status(404).json({ message: 'User not found.' })
-  return res.status(200).json(user)
+  return res.status(200).json({
+    username: user.username,
+    firstName: user.firstName,
+    lastName: user.lastName
+  })
 }
 
 const getAllUsers = async (req: Request, res: Response) => {

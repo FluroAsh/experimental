@@ -10,6 +10,6 @@ router.post('/login', POST.login)
 
 /* ----- Private routes ----- */
 router.use(authenticateToken)
-router.get('/:id', verifyUserMatch, GET.getUser)
+router.get('/:username', verifyUserMatch, GET.getUser)
 
 export default router

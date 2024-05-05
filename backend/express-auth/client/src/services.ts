@@ -9,11 +9,11 @@ export const fetchUserDetails = async (
 }> => {
   const res = await fetch(`http://localhost:3000/user/${username}`, {
     method: 'GET',
+    credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
       authorization: `Bearer ${Cookies.get('jwt')}`
-    },
-    credentials: 'include'
+    }
   })
 
   if (!res.ok) throw new Error('Failed to fetch User Details.')

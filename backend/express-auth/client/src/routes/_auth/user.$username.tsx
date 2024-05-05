@@ -1,33 +1,31 @@
-import { createFileRoute } from '@tanstack/react-router'
-import Cookies from 'js-cookie'
+import { createFileRoute, useRouter } from '@tanstack/react-router'
 
 import { fetchUserDetails } from '../../services'
 
-export const Route = createFileRoute('/_auth/details/$username')({
-  component: DetailsComponent,
-  loader: async ({ params: { username } }) => await fetchUserDetails(username),
-  onError(err) {
-    console.error(err)
-  }
+export const Route = createFileRoute('/_auth/user/$username')({
+  loader: async ({ params: { username } }) => ({
+    user: await fetchUserDetails(username)
+  }),
+  component: DetailsComponent
 })
 
 function DetailsComponent() {
-  const data = Route.useLoaderData()
+  const router = useRouter()
+  const { user } = Route.useLoaderData()
   const navigate = Route.useNavigate()
 
-  if (!data) return <p>No data...</p>
+  if (!user) return <p>No data...</p>
 
-  const { username, firstName, lastName } = data
+  const { username, firstName, lastName } = user
 
-  const handleLogout = async () => {
-    Cookies.remove('jwt')
-    navigate({
-      to: '/login'
+  const handleLogout = () => {
+    router.invalidate().finally(() => {
+      navigate({ to: '/login' })
     })
   }
 
   return (
-    <div className="flex flex-col p-6 rounded-lg shadow-lg bg-slate-900 w-[300px]">
+    <div className="flex flex-col p-6 rounded-lg shadow-lg bg-slate-900 w-[300px] border border-sky-800">
       <h1 className="font-bold">
         Welcome <span className="underline underline-offset-2">{firstName}!</span>
       </h1>
@@ -48,8 +46,9 @@ function DetailsComponent() {
       </div>
 
       <button
+        type="button"
         className="p-2 mt-4 text-sm font-bold rounded-lg bg-sky-600 hover:bg-sky-500 focus:ring-sky-300"
-        onClick={() => handleLogout()}
+        onClick={handleLogout}
       >
         Logout
       </button>

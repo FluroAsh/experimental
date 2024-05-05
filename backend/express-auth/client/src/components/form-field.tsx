@@ -1,9 +1,6 @@
-// import { ReactElement } from 'react'
-
 type FormFieldProps = {
   label: string
   name: string
-  // type?: React.InputHTMLAttributes<HTMLInputElement>['type']
 } & React.InputHTMLAttributes<HTMLInputElement>
 
 export default function FormField({ label, name, type = 'text', ...props }: FormFieldProps) {

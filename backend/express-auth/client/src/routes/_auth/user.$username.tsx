@@ -1,6 +1,6 @@
 import { createFileRoute, useRouter } from '@tanstack/react-router'
 
-import { fetchUserDetails } from '../../services'
+import { fetchUserDetails } from '../../lib/services'
 
 export const Route = createFileRoute('/_auth/user/$username')({
   loader: async ({ params: { username } }) => ({

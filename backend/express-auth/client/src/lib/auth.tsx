@@ -13,12 +13,7 @@ const AUTH_KEY = 'demo.auth.user'
 
 const getStoredUser = () => localStorage.getItem(AUTH_KEY)
 const setStoredUser = (username: string | null) => {
-  // username ? localStorage.setItem(AUTH_KEY, username) : localStorage.removeItem(AUTH_KEY)
-  if (username) {
-    localStorage.setItem(AUTH_KEY, username)
-  } else {
-    localStorage.removeItem(AUTH_KEY)
-  }
+  username ? localStorage.setItem(AUTH_KEY, username) : localStorage.removeItem(AUTH_KEY)
 }
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -43,6 +38,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
 export function useAuth() {
   const context = useContext(AuthContext)
-  if (!context) throw new Error('useAuth must be used within an AuthProvider')
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider')
+  }
   return context
 }

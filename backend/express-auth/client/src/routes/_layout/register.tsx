@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
+import FormField from '../../components/form-field'
 
 export const Route = createFileRoute('/_layout/register')({
   component: () => <Register />
@@ -29,7 +30,7 @@ function Register() {
 
       navigate({
         params: { username: data.username.toString() },
-        to: '/details/$username'
+        to: '/user/$username'
       })
     } catch (e) {
       if (e instanceof Error) {
@@ -50,56 +51,13 @@ function Register() {
           <div className="w-full h-[2px] bg-neutral-300 rounded-full mt-4" />
         </div>
 
-        <div className="flex flex-col">
-          <label htmlFor="password" className="font-bold text-xs mb-[2px]">
-            First Name
-          </label>
-          <input
-            name="firstName"
-            autoComplete="none"
-            className="p-1 pl-2 rounded-sm text-neutral-900 bg-neutral-400 focus:bg-neutral-300"
-          />
-        </div>
+        <FormField label="First Name" name="firstName" />
+        <FormField label="Last Name" name="lastName" />
+        <FormField label="Username" name="username" />
+        <FormField label="Password" name="password" type="password" />
 
-        <div className="flex flex-col">
-          <label htmlFor="password" className="font-bold text-xs mb-[2px]">
-            Last Name
-          </label>
-          <input
-            name="lastName"
-            autoComplete="none"
-            className="p-1 pl-2 rounded-sm text-neutral-900 bg-neutral-400 focus:bg-neutral-300"
-          />
-        </div>
-
-        <div className="flex flex-col min-w-[250px]">
-          <label htmlFor="username" className="font-bold text-xs mb-[2px]">
-            Username
-          </label>
-          <input
-            type="text"
-            name="username"
-            autoComplete="off"
-            className="p-1 pl-2 rounded-sm text-neutral-900 bg-neutral-400 focus:bg-neutral-300"
-          />
-        </div>
-        <div className="flex flex-col">
-          <label htmlFor="password" className="font-bold text-xs mb-[2px]">
-            Password
-          </label>
-          <input
-            type="password"
-            name="password"
-            autoComplete="current-password"
-            className="p-1 pl-2 rounded-sm text-neutral-900 bg-neutral-400 focus:bg-neutral-300"
-          />
-        </div>
-
-        <button
-          type="submit"
-          className="p-2 text-sm font-bold rounded-lg bg-sky-600 hover:bg-sky-500 focus:ring-sky-300 "
-        >
-          Submit
+        <button className="p-2 text-sm font-bold rounded-lg bg-sky-600 hover:bg-sky-500 focus:ring-sky-300 ">
+          Register
         </button>
 
         <div className="text-sm">
